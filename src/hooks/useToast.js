@@ -1,10 +1,6 @@
 // src/hooks/useToast.js
 
-// Hook para mostrar notificaciones Toast usando la librería Toastify (CDN)
-// Asumimos que la librería está cargada globalmente por el CDN (window.Toastify)
-
 export const useToast = () => {
-    // La función Toastify se carga en el objeto global 'window'
     const Toastify = window.Toastify;
 
     const showToast = (message, type = 'success') => {
@@ -16,13 +12,13 @@ export const useToast = () => {
         let backgroundColor = '';
         switch (type) {
             case 'success':
-                backgroundColor = "linear-gradient(to right, #00b09b, #96c93d)"; // Verde
+                backgroundColor = "linear-gradient(to right, #00b09b, #96c93d)";
                 break;
             case 'error':
-                backgroundColor = "linear-gradient(to right, #ff5f6d, #ffc371)"; // Rojo/Naranja
+                backgroundColor = "linear-gradient(to right, #ff5f6d, #ffc371)";
                 break;
             case 'info':
-                backgroundColor = "linear-gradient(to right, #4facfe, #00f2fe)"; // Azul
+                backgroundColor = "linear-gradient(to right, #4facfe, #00f2fe)";
                 break;
             default:
                 backgroundColor = "linear-gradient(to right, #00b09b, #96c93d)";
@@ -36,8 +32,7 @@ export const useToast = () => {
             position: "right", 
             style: {
                 background: backgroundColor,
-            },
-            onClick: function(){} // Callback after click
+            }
         }).showToast();
     };
 

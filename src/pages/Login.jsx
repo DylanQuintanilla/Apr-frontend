@@ -2,31 +2,43 @@
 import React, { useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '../hooks/useToast'; // <-- Importar el hook
+import { useToast } from '../hooks/useToast'; // Asegúrate de que la ruta sea correcta
 
 export default function Login() {
+    // 1. ESTADOS
     const [username, setUsername] = useState('paciente1'); 
     const [password, setPassword] = useState('1234');
+    
+    // 2. HOOKS DE CONTEXTO Y NAVEGACIÓN
     const { login } = useAuth();
     const navigate = useNavigate();
-    const { showToast } = useToast(); // <-- Usar el hook
+    const { showToast } = useToast();
 
+    // 3. FUNCIÓN DE ENVÍO
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        // Previene el comportamiento por defecto de recarga del formulario
+        e.preventDefault(); 
+        
+        // Llamar a la lógica de autenticación
         const success = await login(username, password);
+        
         if (success) {
-            showToast('Inicio de sesión exitoso', 'success'); // <-- Éxito
+            showToast('Inicio de sesión exitoso', 'success');
             navigate('/');
         } else {
-            showToast('Credenciales inválidas. Intente de nuevo.', 'error'); // <-- Error con Toast
+            // Este toast debería aparecer incluso si el backend está caído o las credenciales son malas
+            showToast('Credenciales inválidas o Error de conexión.', 'error'); 
         }
     };
 
+    // 4. RENDERIZADO
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            {/* ... Tu formulario Tailwind (ahora usando CDN) ... */}
+            {/* 5. EL HANDLER DEBE ESTAR ASIGNADO AL FORMULARIO */}
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-96">
                 <h2 className="text-2xl font-bold mb-6 text-center">Clínica Dental Login</h2>
+                
+                {/* Campos de input */}
                 <div className="mb-4">
                     <label className="block text-gray-700">Usuario</label>
                     <input
@@ -47,6 +59,8 @@ export default function Login() {
                         required
                     />
                 </div>
+                
+                {/* El botón de tipo "submit" dentro del form dispara el onSubmit del formulario */}
                 <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
                     Iniciar Sesión
                 </button>

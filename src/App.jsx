@@ -1,6 +1,6 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
+import { AuthProvider, useAuth } from './auth/AuthContext.jsx'; // Nota: uso de .jsx explícito
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CitasPage from './pages/CitasPage'; 
@@ -8,7 +8,6 @@ import CitasPage from './pages/CitasPage';
 // Componente para proteger rutas (PrivateRoutes)
 const PrivateRoute = ({ element: Element }) => {
     const { auth } = useAuth();
-    // Si no está logueado, redirige a /login
     return auth.isLoggedIn ? <Element /> : <Navigate to="/login" />;
 };
 
@@ -28,7 +27,7 @@ function AppRoutes() {
     );
 }
 
-export default function App() { // <-- DEBE SER EXPORT DEFAULT
+export default function App() {
     return (
         <Router>
             <AuthProvider>
