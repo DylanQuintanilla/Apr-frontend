@@ -1,6 +1,7 @@
-// src/auth/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+
+// Ya no necesitamos importar axios
+
 const API_URL = 'http://localhost:8080/auth'; 
 
 const AuthContext = createContext();
@@ -44,11 +45,28 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
+    // 2. Función de LOGIN (Llama al backend usando FETCH)
     const login = async (username, password) => {
         try {
-            const response = await axios.post(`${API_URL}/log-in`, { username, password });
-            
-            const { accessToken, refreshToken, username: user, status } = response.data;
+            const response = await fetch(`${API_URL}/log-in`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            // 1. Manejo de error de credenciales (401, 403, etc.)
+            if (!response.ok) {
+                // Leer el body para obtener el error detallado (aunque sea 409)
+                const errorData = await response.json();
+                console.error("Error en Login (Backend):", errorData);
+                return false;
+            }
+
+            // 2. Procesar respuesta exitosa (200 OK)
+            const data = await response.json();
+            const { accessToken, refreshToken, username: user, status } = data;
             
             if (status) {
                 const decoded = decodeJwt(accessToken);
@@ -69,7 +87,8 @@ export const AuthProvider = ({ children }) => {
             }
             return false;
         } catch (error) {
-            console.error("Error en login:", error);
+            // Este es un error de red (servidor caído o problema de infraestructura)
+            console.error("Error en login (Red o Infraestructura):", error);
             return false;
         }
     };

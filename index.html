@@ -6,20 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Clínica Dental APR</title>
 
+    <!-- 1. CDN DE TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- 2. CDN para DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.css" integrity="sha512-UiK5I+tUXaRzofE0s4w/TjGkLSDy/C3/pE+g/4B54z9f0+g5F0v78Fw5+4aF8P88Vb2o4g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- 3. CDN para Toastify CSS (Eliminamos el hash de integridad) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.css" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawR8z5/w4w4247+j7p+63k74474747474=" crossorigin="anonymous"></script>
+    <!-- Scripts de Librerías CDN -->
+    
+    <!-- 4. Toastify JS (DEBE IR PRIMERO) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.js"></script>
 
+    <!-- 5. jQuery (DEBE IR ANTES DE DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- 6. DataTables JS (Requiere jQuery) -->
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.js" integrity="sha512-lZlT29V9zR5BvI4S4K8jK7pB0J8s1C02+4p+g+t+j+x+B54x7g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </body>
 </html>
