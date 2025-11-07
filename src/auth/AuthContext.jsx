@@ -1,9 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import api from '../api/api'; // <--- CAMBIO: Importar la instancia de Axios
 
-// Ya no necesitamos importar axios
-
-const API_URL = 'http://localhost:8080/auth'; 
-
+const API_URL = 'http://localhost:8080/auth'; // Ya no es tan necesario, pero se mantiene
 const AuthContext = createContext();
 
 const decodeJwt = (token) => {
@@ -25,7 +23,7 @@ export const AuthProvider = ({ children }) => {
         accessToken: null,
         refreshToken: null
     });
-
+    
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
@@ -35,39 +33,25 @@ export const AuthProvider = ({ children }) => {
             const decoded = decodeJwt(accessToken);
             if (decoded && decoded.authorities) {
                 setAuth({
-                    isLoggedIn: true,
+                    isLoggedIn: true, 
                     username,
                     permissions: new Set(decoded.authorities.split(',')),
                     accessToken,
-                    refreshToken
+                    refreshToken 
                 });
             }
         }
     }, []);
 
-    // 2. Función de LOGIN (Llama al backend usando FETCH)
+    // Función de LOGIN (Llama al backend usando API/Axios)
     const login = async (username, password) => {
         try {
-            const response = await fetch(`${API_URL}/log-in`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password })
-            });
-
-            // 1. Manejo de error de credenciales (401, 403, etc.)
-            if (!response.ok) {
-                // Leer el body para obtener el error detallado (aunque sea 409)
-                const errorData = await response.json();
-                console.error("Error en Login (Backend):", errorData);
-                return false;
-            }
-
-            // 2. Procesar respuesta exitosa (200 OK)
-            const data = await response.json();
-            const { accessToken, refreshToken, username: user, status } = data;
+            // --- CAMBIO: Usar api.post en lugar de fetch ---
+            const response = await api.post('/auth/log-in', { username, password });
             
+            const data = response.data; // Axios retorna la respuesta JSON en .data
+            const { accessToken, refreshToken, username: user, status } = data;
+
             if (status) {
                 const decoded = decodeJwt(accessToken);
                 const permissionsArray = decoded.authorities ? decoded.authorities.split(',') : [];
@@ -75,26 +59,30 @@ export const AuthProvider = ({ children }) => {
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
                 localStorage.setItem('username', user);
-
+                
                 setAuth({
                     isLoggedIn: true,
                     username: user,
                     permissions: new Set(permissionsArray),
                     accessToken,
-                    refreshToken
+                    refreshToken 
                 });
-                return true;
+                return true; 
             }
             return false;
         } catch (error) {
-            // Este es un error de red (servidor caído o problema de infraestructura)
-            console.error("Error en login (Red o Infraestructura):", error);
+            // Manejo unificado de errores de Axios
+            if (error.response) {
+                console.error("Error en Login (Backend - Axios):", error.response.data);
+            } else {
+                console.error("Error en login (Red o Infraestructura - Axios):", error);
+            }
             return false;
         }
     };
 
     const logout = () => {
-        localStorage.clear();
+        localStorage.clear(); 
         setAuth({
             isLoggedIn: false,
             username: null,
@@ -110,7 +98,7 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider value={{ auth, login, logout, hasPermission }}>
             {children}
         </AuthContext.Provider>
-    );
+    ); 
 };
 
 export const useAuth = () => useContext(AuthContext);

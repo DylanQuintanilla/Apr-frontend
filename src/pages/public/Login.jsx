@@ -1,8 +1,8 @@
 // src/pages/Login.jsx
 import React, { useState } from 'react';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '../hooks/useToast'; // Asegúrate de que la ruta sea correcta
+import { useToast } from '../../hooks/useToast'; // Asegúrate de que la ruta sea correcta
 
 export default function Login() {
     // 1. ESTADOS

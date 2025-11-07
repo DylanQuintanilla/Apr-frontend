@@ -1,35 +1,33 @@
 // src/pages/CitasPage.jsx
-import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
-import { useAuth } from '../auth/AuthContext';
-import Navbar from '../components/Navbar';
 
+import React, { useEffect, useRef, useState } from 'react';
+import api from '../../api/api'; 
+import { useAuth } from '../../auth/AuthContext';
+import Navbar from '../../components/Navbar';
 // Se utiliza la variable global jQuery cargada por CDN
-const $ = window.jQuery; 
+const $ = window.jQuery;
 
 export default function CitasPage() {
     const tableRef = useRef(null);
     const { auth } = useAuth();
     const [citas, setCitas] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+
     // Función para obtener datos
     const fetchCitas = async () => {
-        if (!auth.accessToken) return; 
+        if (!auth.accessToken) return;
         setLoading(true);
 
         try {
-            const response = await axios.get('http://localhost:8080/citas', {
-                headers: {
-                    Authorization: `Bearer ${auth.accessToken}`
-                }
-            });
+            // Usar api.get: El interceptor de request en api.js ya adjunta el token.
+            const response = await api.get('/citas'); 
+            
             setCitas(response.data);
         } catch (error) {
             console.error("Error al obtener citas:", error);
-            // Manejo de error: ej. logout si el token expira
+            // Si el 401 se dispara, el interceptor intenta refrescar.
             if (error.response && error.response.status === 403) {
-                // logout(); // Si quieres forzar el logout por 403
+                // Puedes agregar aquí una lógica específica si recibes un 403 (Permiso Denegado)
             }
         } finally {
             setLoading(false);
@@ -44,7 +42,7 @@ export default function CitasPage() {
 
     // Inicialización de DataTables
     useEffect(() => {
-        // Solo inicializamos si hay datos, jQuery está cargado y el componente ya no está cargando.
+        // Solo inicializamos si hay datos, jQuery está cargado y ya se terminó la carga.
         if (!loading && citas.length > 0 && tableRef.current && window.jQuery) { 
             
             // 1. Destruir la instancia anterior si existe
@@ -63,14 +61,14 @@ export default function CitasPage() {
                 responsive: true,
             });
         }
-        
+     
         // 3. Función de limpieza
         return () => {
             if (tableRef.current && window.jQuery && $.fn.DataTable.isDataTable(tableRef.current)) {
                 $(tableRef.current).DataTable().destroy();
             }
         };
-    }, [citas, loading]); // Depende de citas y del estado de carga
+    }, [citas, loading]); 
 
     return (
         <div className="min-h-screen bg-gray-100">
